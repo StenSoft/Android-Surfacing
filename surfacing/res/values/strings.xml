@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Surfacing</string>
+    <string-array name="types">
+        <item>None</item>
+        <item>CPU rendering</item>
+        <item>OpenGL</item>
+    </string-array>
+    <string name="draw">Draw</string>
+</resources>

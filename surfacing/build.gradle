@@ -1,0 +1,44 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+
+    defaultConfig {
+        applicationId 'online.adamek.sten.surfacing'
+        minSdkVersion 17
+        targetSdkVersion 26
+        versionCode 1
+        versionName 'example'
+        externalNativeBuild {
+            cmake {
+                cppFlags '-std=c++1z -Wall -Wextra -Werror -Wno-unused-parameter'
+            }
+        }
+    }
+
+    compileOptions {
+        encoding 'UTF-8'
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    sourceSets{
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['java']
+            res.srcDirs = ['res']
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path 'CMakeLists.txt'
+        }
+    }
+}
+
+dependencies {
+    implementation "com.android.support:appcompat-v7:${project.ANDROID_SUPPORT_VERSION}"
+}
+
