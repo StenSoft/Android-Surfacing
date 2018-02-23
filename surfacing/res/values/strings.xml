@@ -5,5 +5,7 @@
         <item>CPU rendering</item>
         <item>OpenGL</item>
     </string-array>
+
+    <string name="reinit">Re-init</string>
     <string name="draw">Draw</string>
 </resources>

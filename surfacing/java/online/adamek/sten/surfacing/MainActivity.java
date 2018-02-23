@@ -52,6 +52,7 @@ public class MainActivity
         mSpinner.setAdapter(adapter);
         mSpinner.setOnItemSelectedListener(this);
 
+        findViewById(R.id.reinit).setOnClickListener(this::onReinit);
         findViewById(R.id.draw).setOnClickListener(this::onDraw);
 
         mTextureView = findViewById(R.id.texture);
@@ -92,6 +93,11 @@ public class MainActivity
     public native void onSelected(@Nullable SurfaceTexture texture,
                                   @IntRange(from=0) int selection);
 
+
+    public void onReinit(@NonNull View view)
+    {
+        onSelected(mSpinner.getSelectedItemPosition());
+    }
 
 
     public void onDraw(@NonNull View view)
@@ -150,6 +156,6 @@ public class MainActivity
         mLog[3].setText(mLog[2].getText());
         mLog[2].setText(mLog[1].getText());
         mLog[1].setText(mLog[0].getText());
-        mLog[0].setText(message);
+        mLog[0].setText(String.format(Locale.ROOT, "%s [%d]", message, System.currentTimeMillis()));
     }
 }
