@@ -122,6 +122,8 @@ public class MainActivity
 
     {
         log(String.format(Locale.ROOT, "Texture resized (%d×%d)", width, height));
+        /* The surface remains valid so no reinitialization is needed but its dimensions have
+         * changed. You may want to recalculate OpenGL matrix or update buffer geometry here. */
     }
 
 
@@ -129,6 +131,8 @@ public class MainActivity
     public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surface)
     {
         log("Texture destroyed");
+        // Deinitialize
+        onSelected(null, 0);
         return true;
     }
 
@@ -136,7 +140,7 @@ public class MainActivity
     @Override
     public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surface)
     {
-        // Don't log, each draw updates the texture and logs on its own
+        // Each draw updates the texture and logs on its own
     }
 
 
