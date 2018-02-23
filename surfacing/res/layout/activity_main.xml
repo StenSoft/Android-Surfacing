@@ -16,6 +16,52 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/log0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="15dp"
+            style="@style/Text"/>
+
+        <TextView
+            android:id="@+id/log1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/log0"
+            android:alpha=".8"
+            style="@style/Text"/>
+
+        <TextView
+            android:id="@+id/log2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/log1"
+            android:alpha=".6"
+            style="@style/Text"/>
+
+        <TextView
+            android:id="@+id/log3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/log2"
+            android:alpha=".4"
+            style="@style/Text"/>
+
+        <TextView
+            android:id="@+id/log4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/log3"
+            android:alpha=".2"
+            style="@style/Text"/>
+
+        <!-- This grid layout is below the log text views so that it will draw over them -->
         <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -59,46 +105,5 @@
                 android:textAllCaps="true"
                 android:text="@string/draw"/>
         </GridLayout>
-
-        <TextView
-            android:id="@+id/log0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="15dp"
-            style="@style/Text"/>
-
-        <TextView
-            android:id="@+id/log1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@id/log0"
-            style="@style/Text"/>
-
-        <TextView
-            android:id="@+id/log2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@id/log1"
-            style="@style/Text"/>
-
-        <TextView
-            android:id="@+id/log3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@id/log2"
-            style="@style/Text"/>
-
-        <TextView
-            android:id="@+id/log4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@id/log3"
-            style="@style/Text"/>
     </RelativeLayout>
 </FrameLayout>
