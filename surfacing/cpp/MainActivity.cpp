@@ -10,14 +10,14 @@
 #include <EGL/eglext.h>
 #include <GLES2/gl2.h>
 
-// The surface and its window
+/** The surface and its native window. */
 static jobject surface = nullptr;
 static ANativeWindow * window = nullptr;
 
-// Used to alternate colors
+/** Used to alternate colors. */
 static int iteration = 0;
 
-// Colors to draw
+/** Colors to draw. */
 static constexpr uint32_t colors[] = {
     0x88bf360c,
     0xcc3e2723,
@@ -28,7 +28,7 @@ static constexpr uint32_t colors[] = {
 };
 
 
-// Classes and methods from JNI
+/** Classes and methods from JNI. */
 namespace JNI
 {
     /** android.view.Surface class */
@@ -41,12 +41,19 @@ namespace JNI
     static jmethodID surface_release;
 }
 
-// EGL stuff
+/** OpenGL stuff. */
 namespace EGL
 {
+    /** OpenGL display. There's only one, the default. */
     static EGLDisplay display = nullptr;
+
+    /** Configuration. We want OpenGL ES2 with RGBA. */
     static EGLConfig config = nullptr;
+
+    /** OpenGL drawing context. Each TextureView has its own. */
     static EGLContext context = nullptr;
+
+    /** Surface to draw to. */
     static EGLSurface surface = nullptr;
 }
 
@@ -175,8 +182,7 @@ void draw(
         // TODO Locked bounds can be larger than requested, we should check them
 
         uint8_t *buffer = static_cast<uint8_t*>(surface.bits);
-        // Value in color is ARGB but this is RGBA
-        // Also value in color has unknown endianned so we can't just memcpy it
+        // Value in color is ARGB but the surface expects RGBA
         buffer[0] = color >> 16;
         buffer[1] = color >> 8;
         buffer[2] = color >> 0;
@@ -188,7 +194,7 @@ void draw(
             log("Failed to post");
             return;
         }
-        log("Drawn using Native Window");
+        log("Drawn %08x using Native Window", color);
         return;
     }
 
@@ -211,7 +217,7 @@ void draw(
         (color & 0xff000000) / 4294967296.);
     glClear(GL_COLOR_BUFFER_BIT);
     eglSwapBuffers(EGL::display, EGL::surface);
-    log("Drawn using OpenGL");
+    log("Drawn %08x using OpenGL", color);
 }
 
 
@@ -227,20 +233,34 @@ Java_online_adamek_sten_surfacing_MainActivity_onSelected(
         // Shortcut, don't log
         return;
 
+    // Tear down
     if (::window != nullptr)
     {
         draw(env, activity, 0x0); // Clear the surface
+
+        if (EGL::surface != nullptr)
+            eglDestroySurface(EGL::display, EGL::surface);
+        EGL::surface = nullptr;
+
+        if (EGL::context != nullptr)
+            eglDestroyContext(EGL::display, EGL::context);
+        EGL::context = nullptr;
+
         ANativeWindow_release(::window);
         ::window = nullptr;
     }
 
     if (::surface != nullptr)
+        /* Releasing the surface is extremely important. You can't initialize OpenGL on the same
+         * surface which was used for CPU rendering as there is no way how to deinitialize CPU
+         * rendering on a surface. So each time you want to switch, you need to create a new
+         * surface. */
         releaseSurface(env, activity);
 
     if (selection == 0)
     {
         // No implementation selected
-        log("Cleared and deinitialized");
+        log("Deinitialized");
         return;
     }
 
@@ -250,18 +270,11 @@ Java_online_adamek_sten_surfacing_MainActivity_onSelected(
 
     if (selection == 1 /* CPU rendering */)
     {
-        if (EGL::surface != nullptr)
-            eglDestroySurface(EGL::display, EGL::surface);
-        EGL::surface = nullptr;
-
-        if (EGL::context != nullptr)
-            eglDestroyContext(EGL::display, EGL::context);
-        EGL::context = nullptr;
-
         log("CPU rendering initialized");
     }
     else if (selection == 2 /* OpenGL */)
     {
+        // Display and config need to be initialized only once
         if (EGL::display == nullptr)
         {
             EGL::display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
@@ -273,6 +286,7 @@ Java_online_adamek_sten_surfacing_MainActivity_onSelected(
             }
 
             {
+                // We want to use OpenGL ES2 with RGBA
                 EGLint attrs[] = {
                     EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
                     EGL_RED_SIZE, 8,
@@ -304,13 +318,11 @@ Java_online_adamek_sten_surfacing_MainActivity_onSelected(
             }
         }
 
+        EGL::surface = eglCreateWindowSurface(EGL::display, EGL::config, ::window, nullptr);
+        if (EGL::surface == nullptr)
         {
-            EGL::surface = eglCreateWindowSurface(EGL::display, EGL::config, ::window, nullptr);
-            if (EGL::surface == nullptr)
-            {
-                log("Failed to create OpenGL surface");
-                return;
-            }
+            log("Failed to create OpenGL surface");
+            return;
         }
 
         log("OpenGL initialized");
