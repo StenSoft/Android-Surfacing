@@ -10,7 +10,6 @@ import android.view.TextureView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -129,7 +128,8 @@ public class MainActivity
     {
         log(String.format(Locale.ROOT, "Texture resized (%d×%d)", width, height));
         /* The surface remains valid so no reinitialization is needed but its dimensions have
-         * changed. You may want to recalculate OpenGL matrix or update buffer geometry here. */
+         * changed. You may want to recalculate OpenGL matrix or update buffer geometry here,
+         * or rather call native method that does that. */
     }
 
 

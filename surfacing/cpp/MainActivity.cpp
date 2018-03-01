@@ -200,13 +200,19 @@ void draw(
 
     // -*-*-*-*-*-*- OpenGL rendering -*-*-*-*-*-*-
 
-    // As we have only one surface, eglMakeCurrent can be called in initialization but if you would
-    // have multiple surfaces, you need to change current on each draw so we show it here
+    /* As we have only one surface on this thread, eglMakeCurrent can be called in initialization
+     * but if you would want to draw multiple surfaces on the same thread, you need to change
+     * current context and the easiest way to keep track of the current surface is to change it on
+     * each draw so that's what is shown here. Each thread has its own current context and one
+     * context cannot be current on multiple threads at the same time. */
     if (!eglMakeCurrent(EGL::display, EGL::surface, EGL::surface, EGL::context))
     {
         log("Failed to attach context");
         return;
     }
+    /* If you move eglMakeCurrent(EGL::context) to intiialization, eglMakeCurrent(EGL_NO_CONTEXT)
+     * should go to deinitialization. Neither eglDestroyContext nor eglTerminate disconnects the
+     * surface, only marks it for deletion when it's disconnected. */
     auto contextCurrentGuard = guard([=]{ eglMakeCurrent(EGL::display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT); });
 
     // Note the dot after divide, the division has to be floating-point
@@ -253,8 +259,9 @@ Java_online_adamek_sten_surfacing_MainActivity_onSelected(
     if (::surface != nullptr)
         /* Releasing the surface is extremely important. You can't initialize OpenGL on the same
          * surface which was used for CPU rendering as there is no way how to deinitialize CPU
-         * rendering on a surface. So each time you want to switch, you need to create a new
-         * surface. */
+         * rendering on a surface (OpenGL can be disconnected with eglMakeCurrent(EGL_NO_CONTEXT)).
+         * So each time you want to switch, you need to create a new surface for the surface
+         * texture, but to be able to do so, you need to release the original surface first. */
         releaseSurface(env, activity);
 
     if (selection == 0)

@@ -5,8 +5,8 @@ android {
 
     defaultConfig {
         applicationId 'online.adamek.sten.surfacing'
-        minSdkVersion 17
-        targetSdkVersion 26
+        minSdkVersion 14
+        targetSdkVersion 27
         versionCode 1
         versionName 'example'
         externalNativeBuild {
