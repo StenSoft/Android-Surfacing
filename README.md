@@ -7,8 +7,7 @@ and how to properly deinitialize it so that you can switch from OpenGL to
 CPU rendering and vice versa on the same `SurfaceTexture` and in the same
 `TextureView`.
 
-Rationale
-~~~~~~~~~
+## Rationale
 
 If deinitialization is not properly done, you can spend several days or even
 weeks debugging cryptic errors in Logcat, such as:
@@ -24,8 +23,7 @@ going through Buffer Queue sources, I prepared this simple and
 easy-to-follow example of how to do it properly on any Android that
 supports `TextureView` and OpenGL ES2.
 
-Threading
-~~~~~~~~~
+## Threading
 
 In the example here, all drawing is done on the main (UI) thread. This is
 fine for the simple one-color drawing we do here but you may want to move
